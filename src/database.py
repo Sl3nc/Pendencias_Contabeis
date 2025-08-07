@@ -8,7 +8,7 @@ from os import getenv
 
 load_dotenv(Path(__file__).parent / 'env' / '.env')
 
-class DataBase:
+class Database:
     """
     Classe responsável por todas as operações de acesso ao banco de dados MySQL.
     Gerencia empresas, pendências, emails, impostos e histórico de envios.
@@ -26,7 +26,7 @@ class DataBase:
         self.connection = connect(
                 host= getenv('IP_HOST'),
                 port= int(getenv('PORT_HOST')),
-                user= getenv('USER'),
+                user= getenv('USER_DB'),
                 password= getenv('PASSWORD'),
                 database= getenv('DB'),
             )
@@ -92,7 +92,7 @@ class DataBase:
         )
 
         self.query_pedency = (
-            f'SELECT {', '.join(self.columns_pending) } '
+            f'SELECT {", ".join(self.columns_pending) } '
             f'FROM {self.PENDING_TABLE} '
             'WHERE id_companies = %s'
         )

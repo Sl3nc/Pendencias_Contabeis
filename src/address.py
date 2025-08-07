@@ -12,13 +12,14 @@ from PySide6.QtWidgets import (
 
 from change import Change
 from tkinter import messagebox
-from re import findall
+from email_validator import validate_email
 
 class Address:
     """
     Gerencia a interface e as operações relacionadas aos endereços de email de uma empresa.
     Permite adicionar, editar, remover e validar emails, além de controlar as alterações para persistência.
     """
+
     def __init__(self, id, address):
         """
         Inicializa o widget de emails com os dados fornecidos.
@@ -252,11 +253,8 @@ class Address:
                     'Defina um endereço de e-mail para o espaço adcionado, caso contrário, o remova'
             )
                     
-        if len(findall(self.valid_email_pattern, text)) != 2:
-            raise Exception(
-                    'Defina um endereço de e-mail válido'
-            )
-        
+        validate_email(text)
+                
     def save(self):
         """
         Aplica as alterações visuais e remove emails marcados para remoção.

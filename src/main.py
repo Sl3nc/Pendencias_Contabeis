@@ -14,15 +14,16 @@ from local_changes import LocalChanges
 from window_pend import Ui_MainWindow
 from re import compile, findall
 from tkinter import messagebox
-from database import DataBase
+from database import Database 
 from datetime import datetime
 from pendency import Pedency
 from address import Address
 from postman import Postman
-from os import startfile
+from startfile import startfile
 from pathlib import Path
 from sheet import Sheet
 from pymysql import err
+from email_validator import EmailNotValidError
 import sys
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -186,7 +187,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Tenta conectar ao banco de dados, exibindo mensagem de erro caso falhe.
         """
         try:
-            return DataBase()
+            return Database()
         except err.OperationalError as e:
             messagebox.showerror('Aviso!', self.message_error_docker.format(e))
             sys.exit()
@@ -563,9 +564,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Recarrega as pendências e emails da empresa, caso não haja alterações pendentes.
         """
-        """
-        Recarrega as pendências e emails da empresa, caso não haja alterações pendentes.
-        """
         try:
             if any([self.pedency.has_change(), self.address.has_change()]):
                 raise Exception(self.message_pending_save)
@@ -576,9 +574,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             messagebox.showerror('Aviso', err)
 
     def sheet(self):
-        """
-        Gera e exporta o relatório de envios, conforme o contexto atual (todas empresas ou empresa selecionada).
-        """
         """
         Gera e exporta o relatório de envios, conforme o contexto atual (todas empresas ou empresa selecionada).
         """
@@ -611,9 +606,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Converte as datas dos widgets para objetos datetime.
         """
-        """
-        Converte as datas dos widgets para objetos datetime.
-        """
         dates = []
         for widget in self.ref_date_sheet:
             var = widget.text().split('/')
@@ -626,16 +618,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Abre o arquivo gerado pelo relatório.
         """
-        """
-        Abre o arquivo gerado pelo relatório.
-        """
         self.exec_load(False)
         startfile(path)
 
     def save(self):
-        """
-        Salva alterações de pendências e emails, caso existam.
-        """
         """
         Salva alterações de pendências e emails, caso existam.
         """
@@ -662,10 +648,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 func(self.current_companie_id, widget_change)
                 widget.save()
             
-            self.disable_btns()
+            # self.disable_btns()
+        except EmailNotValidError:
+            messagebox.showerror('Aviso', 'Defina um endereço de e-mail válido')
+
         except Exception as err:
-            self.disable_btns()
             messagebox.showerror('Aviso', err)
+
+        finally:
+            self.disable_btns()
 
     def exit_pedency(self):
         """

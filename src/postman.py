@@ -22,7 +22,9 @@ class Postman(QObject):
         self.address = address
         self.pedency = pedency
         self.taxes = taxes
-        self.result_message = f'Pendências da empresa - {companie} - forem enviadas com sucesso para o(s) endereço(s):\n|=>{'\n|=>'.join(self.address)}'
+        
+        addres_join = "\n|=>".join(self.address)
+        self.result_message = f'Pendências da empresa - {companie} - forem enviadas com sucesso para o(s) endereço(s):\n|=>{addres_join}'
         pass
 
     def execute(self):
